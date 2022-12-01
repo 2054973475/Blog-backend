@@ -58,10 +58,10 @@ router.post('/set', (req, res, next) => {
     const updateList = keys
       .map((key, index) => `${key}=?`)
       .join(',');
-    const sql = `update blogClassify set ${updateList},updateDate= ? where id = ?;`;
+    const sql = `update blogClassify set ${updateList} where id = ?;`;
     connection.query(
       sql,
-      [...values,dayjs().format('YYYY-MM-DD HH:mm:ss'), Number(id)],
+      [...values,Number(id)],
       (error, results, fields) => {
         try {
           res.send(resultSuccess(results[0], { message: '修改成功！' }));
@@ -77,17 +77,15 @@ router.post('/add', (req, res, next) => {
   const { keys, values } = req.body;
   const sql = `insert into blogClassify(${keys.join(
     ','
-  )},username,createDate,updateDate) values(${values
+  )},username) values(${values
     .map((item) => `?`)
-    .join(',')},?,?,?)`;
+    .join(',')},?)`;
   tokenVerification(req, res, (username) => {
     connection.query(
       sql,
       [
         ...values,
-        username,
-        dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        username
       ],
       (error, results, fields) => {
         try {

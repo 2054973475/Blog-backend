@@ -61,7 +61,6 @@ router.get('/getInfo', function (req, res, next) {
     connection.query(sql, [username], (error, results, fields) => {
       if (error) throw error;
       delete results[0].id;
-      results[0].roles = JSON.parse(results[0].roles);
       res.send(resultSuccess(results[0]));
     });
   });
