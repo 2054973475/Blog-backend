@@ -1,46 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql');
+const { connection }= require('../util/connection')
+const { resultSuccess, resultError }= require('../util/result')
+const { tokenVerification }= require('../util/tokenVerification')
 
-function resultSuccess(result, { message = '' } = {}) {
-  return {
-    code: 20000,
-    result,
-    message,
-    type: 'success',
-  };
-}
-function resultError(
-  message = 'Request failed',
-  { code = 60204, result = null } = {}
-) {
-  return {
-    code,
-    result,
-    message,
-    type: 'error',
-  };
-}
-
-function tokenVerification(req, res, callback) {
-  if (!req.headers.authorization) return res.send(resultError('Invalid token'));
-  const token = req.headers.authorization;
-  const sql = 'select * from users where token= ?;';
-  connection.query(sql, [token], (error, results, fields) => {
-    if (error) throw error;
-    const errordata = 'The corresponding user information was not obtained!';
-    if (results.length === 0) return resultError(errordata);
-    callback(results[0].username);
-  });
-}
-
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '123456',
-  database: 'blog',
-});
-connection.connect();
 
 router.post('/login', function (req, res, next) {
   const { username, password } = req.body;

@@ -1,13 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql');
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '123456',
-  database: 'blog',
-});
-connection.connect();
+const { connection }= require('../util/connection')
+
+
 router.get('/getInfo', function (req, res, next) {
   const sql = 'select id,name,email,phone,introduction,avatar,QQ,userDesc from userInfo where username= "admin";';
   connection.query(sql, [], (error, results, fields) => {
