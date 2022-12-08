@@ -1,6 +1,6 @@
 const config = {
-  secretId: "AKIDkPYcgb0JWlv08gBXs6D9vcJwY8ujuPFE",
-  secretKey: "443tjXchAVmLxW7lKi0CIFGPbnAWt6la",
+  secretId: "",
+  secretKey: "",
   proxy: "",
   host: "sts.tencentcloudapi.com",
   durationSeconds: 1800,
