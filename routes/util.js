@@ -1,31 +1,57 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const fs = require('fs');
-const { connection }= require('../util/connection')
-const { resultSuccess, resultError }= require('../util/result')
-const { tokenVerification }= require('../util/tokenVerification')
-
-router.post('/upload', function (req, res, next) {
-    const { imgData } = req.body;
-  tokenVerification(req, res, async(username) => {
-      res.send(resultSuccess(await write(imgData)));
+const formidable = require("formidable");
+const fs = require("fs");
+const sts = require("qcloud-cos-sts");
+const { config, policy } = require("../util/stsConfig");
+const { tokenVerification } = require("../util/tokenVerification");
+router.post("/upload-img", function (req, res, next) {
+  var form = new formidable.IncomingForm();
+  form.uploadDir = "public/image";
+  form.parse(req, function (err, fields, files) {
+    var extname = files.myFileName.originalFilename;
+    var oldpath = files.myFileName.filepath;
+    var newpath = "public/image/" + extname;
+    try {
+      fs.rename(oldpath, newpath, function (err) {
+        if (err) {
+          res.json({ errno: 1, data: [] });
+        }
+        var mypath = newpath.replace("public", "http://localhost:3000");
+        console.log(mypath);
+        res.send({
+          errno: 0,
+          data: {
+            url: mypath,
+          },
+        });
+      });
+    } catch (ex) {
+      res.send({
+        errno: 1,
+        message: "失败信息",
+      });
+    }
   });
 });
-function write(imgData){
-    return new Promise((resolve,reject)=>{
-        const path="/image/image"+new Date().getTime()+".png"
-        const base64Data = imgData.replace(/^data:image\/\w+;base64,/, "");
-        const dataBuffer = Buffer.from(base64Data, 'base64'); 
-        fs.writeFile('./public'+path, dataBuffer, function(err) {
-            if(err){
-                reject(err)
-            }else{
-                resolve({
-                    mag:"成功",
-                    imgUrl:path
-                })
-            }
+router.get("/cosConfig", (req, res, next) => {
+  tokenVerification(req, res, (username) => {
+    sts.getCredential(
+      {
+        secretId: config.secretId,
+        secretKey: config.secretKey,
+        proxy: config.proxy,
+        durationSeconds: config.durationSeconds,
+        policy: policy,
+      },
+      (err, data) => {
+        if (err) throw err;
+        res.send({
+          code: 20000,
+          data,
         });
-    })
-}
+      }
+    );
+  });
+});
 module.exports = router;

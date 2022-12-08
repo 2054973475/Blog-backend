@@ -85,7 +85,7 @@ router.post('/add', (req, res, next) => {
       ],
       (error, results, fields) => {
         try {
-          res.send(resultSuccess(results[0], { message: '添加成功！' }));
+          res.send(resultSuccess(results, { message: '添加成功！' }));
         } catch (error) {
           res.send(resultError('新增失败！'));
         }
