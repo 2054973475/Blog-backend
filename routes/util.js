@@ -18,7 +18,6 @@ router.post("/upload-img", function (req, res, next) {
           res.json({ errno: 1, data: [] });
         }
         var mypath = newpath.replace("public", "http://localhost:3000");
-        console.log(mypath);
         res.send({
           errno: 0,
           data: {

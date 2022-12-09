@@ -35,7 +35,6 @@ router.get('/getCarousel', function (req, res, next) {
   });
 });
 router.post('/getAllArticle', function (req, res, next) {
-  console.log(req.body)
   const tags=req.body.tags
   const classify=req.body.classify
   const title=req.body.title
