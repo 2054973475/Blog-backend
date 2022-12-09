@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : fwq1
+ Source Server         : bd
  Source Server Type    : MySQL
- Source Server Version : 80026
- Source Host           : 119.91.198.247:3306
+ Source Server Version : 50739
+ Source Host           : localhost:3306
  Source Schema         : blog
 
  Target Server Type    : MySQL
- Target Server Version : 80026
+ Target Server Version : 50739
  File Encoding         : 65001
 
- Date: 08/12/2022 17:06:06
+ Date: 09/12/2022 11:34:00
 */
 
 SET NAMES utf8mb4;
@@ -22,7 +22,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `blogarticle`;
 CREATE TABLE `blogarticle`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `isRelease` tinyint(1) NULL DEFAULT NULL,
   `summary` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
@@ -30,9 +30,9 @@ CREATE TABLE `blogarticle`  (
   `releaseDate` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `coverImg` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   `content` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-  `classifyId` int NULL DEFAULT NULL,
+  `classifyId` int(11) NULL DEFAULT NULL,
   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `viewNumber` int NULL DEFAULT NULL,
+  `viewNumber` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
@@ -55,7 +55,7 @@ INSERT INTO `blogarticle` VALUES (26, 'centos彻底卸载mysql（不保留数据
 -- ----------------------------
 DROP TABLE IF EXISTS `blogclassify`;
 CREATE TABLE `blogclassify`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `word` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `classifyDesc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -76,7 +76,7 @@ INSERT INTO `blogclassify` VALUES (4, '测试', '', '', 'admin');
 -- ----------------------------
 DROP TABLE IF EXISTS `carousel`;
 CREATE TABLE `carousel`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `picture` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   `pictureDesc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -96,7 +96,7 @@ INSERT INTO `carousel` VALUES (5, 'https://blog-1315594183.cos.ap-guangzhou.myqc
 -- ----------------------------
 DROP TABLE IF EXISTS `links`;
 CREATE TABLE `links`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `link` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `linkDesc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -115,7 +115,7 @@ INSERT INTO `links` VALUES (2, 'vue', 'https://cn.vuejs.org/', '', 'admin');
 -- ----------------------------
 DROP TABLE IF EXISTS `userinfo`;
 CREATE TABLE `userinfo`  (
-  `id` int NOT NULL,
+  `id` int(11) NOT NULL,
   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `avatar` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
@@ -137,10 +137,10 @@ INSERT INTO `userinfo` VALUES (1, 'admin', 'admin', 'https://blog-1315594183.cos
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`  (
-  `id` int NOT NULL,
+  `id` int(11) NOT NULL,
   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `token` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `power` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
