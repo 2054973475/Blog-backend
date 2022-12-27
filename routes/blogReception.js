@@ -139,9 +139,12 @@ router.post("/addLeavingMessage", async (req, res, next) => {
   } else {
     delete body.name;
     delete body.email;
-    const sql =
-      "insert into leavingmessage(pid,time,content,replyid,replyContent,articleId,replyMessageId,leavingmessageuserid) VALUES(?,?,?,?,?,?,?,?);";
-    const results = await connectionQuery(sql, [...Object.values(body), id]);
+    let sql_keys = "";
+    for (let i = 0; i < Object.keys(body).length; i++) {
+      sql_keys += Object.keys(body)[i]+',';
+    }
+    const sql =`insert into leavingmessage(${sql_keys}leavingmessageuserid) VALUES(?,?,?,?,?,?,?,?);`;
+    const results = await connectionQuery(sql, [...Object.values(body),id]);
     if (results.affectedRows === 1) {
       res.send({ mag: "留言发表成功！", status: 1 });
     } else {
