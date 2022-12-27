@@ -1,11 +1,11 @@
 const config = {
-  secretId: "AKIDkPYcgb0JWlv08gBXs6D9vcJwY8ujuPFE",
-  secretKey: "443tjXchAVmLxW7lKi0CIFGPbnAWt6la",
+  secretId: "",
+  secretKey: "",
   proxy: "",
   host: "sts.tencentcloudapi.com",
   durationSeconds: 1800,
-  bucket: "blog-1315594183",
-  region: "ap-guangzhou",
+  bucket: "",
+  region: "",
   allowPrefix: "images/*",
   allowActions: [
     // 简单上传

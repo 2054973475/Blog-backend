@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { connection } = require("../util/connection");
+const { connection, connectionQuery } = require("../util/connection");
 const { resultSuccess, resultError } = require("../util/result");
 const { tokenVerification } = require("../util/tokenVerification");
 const { createToken } = require("../util/token");
@@ -11,12 +11,12 @@ router.post("/login", function (req, res, next) {
   connection.query(sql, [username, password], (error, results, fields) => {
     if (error) throw error;
     if (results.length !== 0) {
-      const data={
-        username:results[0].username,
-        password:results[0].password,
-        power:results[0].power,
-      }
-      const token = createToken(data)
+      const data = {
+        username: results[0].username,
+        password: results[0].password,
+        power: results[0].power,
+      };
+      const token = createToken(data);
       res.send(resultSuccess(token, { message: "登录成功" }));
     } else {
       res.send(resultError("帐户或密码不正确！"));
@@ -45,5 +45,18 @@ router.post("/setInfo", (req, res, next) => {
       res.send(resultSuccess(results, { message: "修改成功！" }));
     });
   });
+});
+
+router.post("/updatePassword", async (req, res, next) => {
+  const { oldPass, newPass } = req.body;
+  const sql1 = 'select * from users where username = "admin" and password = ?;';
+  const sql2 = 'update users set password = ? where username = "admin";';
+  const res1 = await connectionQuery(sql1, [oldPass]);
+  if (res1.length === 0) {
+    res.send(resultError("旧密码错误，修改失败！"));
+  } else {
+    const res1 = await connectionQuery(sql2, [newPass]);
+    res.send(resultSuccess({ message: "修改成功！" }));
+  }
 });
 module.exports = router;
