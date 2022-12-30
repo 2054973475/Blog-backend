@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : bd
+ Source Server         : fwq1
  Source Server Type    : MySQL
- Source Server Version : 50739
- Source Host           : localhost:3306
+ Source Server Version : 80026
+ Source Host           : 159.75.239.201:3306
  Source Schema         : blog
 
  Target Server Type    : MySQL
- Target Server Version : 50739
+ Target Server Version : 80026
  File Encoding         : 65001
 
- Date: 27/12/2022 16:32:21
+ Date: 30/12/2022 12:03:41
 */
 
 SET NAMES utf8mb4;
@@ -22,19 +22,19 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `blogarticle`;
 CREATE TABLE `blogarticle`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `isRelease` tinyint(1) NULL DEFAULT NULL,
-  `summary` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-  `tags` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `releaseDate` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `coverImg` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-  `content` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-  `classifyId` int(11) NULL DEFAULT NULL,
-  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `viewNumber` int(11) NULL DEFAULT NULL,
+  `summary` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `tags` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `releaseDate` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `coverImg` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `classifyId` int NULL DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `viewNumber` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of blogarticle
@@ -49,19 +49,21 @@ INSERT INTO `blogarticle` VALUES (22, 'PM2 启动3000端口访问不了', 1, 'PM
 INSERT INTO `blogarticle` VALUES (23, 'MySQL运行报错:“Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggre”解决方法', 1, 'MySQL运行报错:“Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggre”解决方法', 'mysql', '2022-12-02 17:05:18', 'https://blog-1315594183.cos.ap-guangzhou.myqcloud.com/images/article/1670489499626.jpeg', '<p><br></p><h2>项目场景：</h2><p>最近在部署项目之后，运行出现报错：</p><pre><code class=\"language-sql\">Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column\n‘grades.order_id’ which is not functionally dependent on columns in GROUP BY clause; \nthis is incompatible with sql_mode=only_full_group_by</code></pre><h2>问题描述</h2><p>字面意思理解：</p><pre><code >SELECT 列表的表达式 #1 不在 GROUP BY 子句中，并且包含非聚合列“grades.order_id” 它在功能上不依赖于GROUP BY 子句中的列； 这与 sql_mode=only_full_group_by 不兼容</code></pre><p>使用GROUP BY 语句违背了sql_mode=only_full_group_by。因为mysql版本5.7之后默认的模式是<strong>ONLY_FULL_GROUP_BY</strong>。</p><h2>原因分析：</h2><p>查看官方文档，发现从 <strong>MySQL 5.7.5 开始，默认 SQL 模式包括 ONLY_FULL_GROUP_BY</strong>。 （在 5.7.5 之前，MySQL 不检测函数依赖，并且默认不启用 ONLY_FULL_GROUP_BY。）这可能会导致一些sql语句失效。</p><h2>解决方案：</h2><p>执行命令</p><pre><code >vim /etc/mysql/conf.d/mysql.cnf</code></pre><p>修改配置文件</p><p>如果my.cnf中有sql_mode配置，则将ONLY_FULL_GROUP_BY去掉。</p><p>如果没有，则将下面内容放到相应位置</p><p>[mysqld] sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</p><p>保存之后，执行命令<code>service mysql restart</code>重启mysql即可。</p><p><strong>2022.06.10更新</strong></p><p><img src=\"https://img.jbzj.com/file_images/article/202206/20220613152255143.png\" alt=\"\" data-href=\"\" style=\"\"/></p><p>最近用docker安装mysql又出现这个问题，修改配置文件之后，重启mysql发现连不上mysql</p><p>于是查看错误信息 <code>docker logs -f --tail 10 mysql</code>，出现报错：</p><pre><code >Error while setting value‘STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION’to ‘sql_mode’</code></pre><p><img src=\"https://img.jbzj.com/file_images/article/202206/20220613152255144.jpg\" alt=\"\" data-href=\"\" style=\"\"/></p><p><strong>原来mysql 8.0 以上取消了NO_AUTO_CREATE_USER这个关键字</strong>，在my.cnf中的sql_mode中删掉这个关键字即可。</p><h2>总结</h2><p>到此这篇关于MySQL运行报错:“Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggre”解决方法的文章就介绍到这了,更多相关MySQL运行报错内容请搜索脚本之家以前的文章或继续浏览下面的相关文章希望大家以后多多支持脚本之家！</p>', 3, 'admin', 2);
 INSERT INTO `blogarticle` VALUES (24, '关于MySqL数据库查询当前数据的上一条和下一条数据', 1, '关于MySqL数据库查询当前数据的上一条和下一条数据', 'mysql', '2022-12-02 17:27:06', 'https://blog-1315594183.cos.ap-guangzhou.myqcloud.com/images/article/1670489541030.jpeg', '<p style=\"text-align: center;\"><img src=\"https://blog-1315594183.cos.ap-guangzhou.myqcloud.com/images/article/1670489514844-331.png\" alt=\"\" data-href=\"\" style=\"\"></p><p>如上图所示第14行数据的上一条和下一条，id都不是连续的，因此意图通过id-1或者id+1是肯定行不通的，那么怎么办呢？其实也简单就是查询比id=14小的元素中的最大值，比id=14大的元素中的最小值。</p><pre><code class=\"language-sql\">select * from tb_user where id in \n(select \ncase\nwhen SIGN(id-14)&gt;0 THEN MIN(id)\nwhen SIGN(id-14)&lt;0 THEN MAX(id)\nELSE id\nend\nfrom tb_user\n\nGROUP BY SIGN(id-14)\nORDER BY SIGN(id-14)\n)\nORDER BY id</code></pre><p>运行效果：</p><p style=\"text-align: center;\"><img src=\"https://blog-1315594183.cos.ap-guangzhou.myqcloud.com/images/article/1670489526005-332.png\" alt=\"\" data-href=\"\" style=\"\"></p><pre><code class=\"language-sql\">select * from tb_user where id in \n(select \ncase\nwhen SIGN(id-14)&gt;0 THEN MIN(id)\nwhen SIGN(id-14)&lt;0 THEN MAX(id)\nELSE id\nend\nfrom tb_user\nwhere id != 14\nGROUP BY SIGN(id-14)\nORDER BY SIGN(id-14)\n)\nORDER BY id</code></pre><p>运行效果：</p><p style=\"text-align: center;\"><img src=\"https://blog-1315594183.cos.ap-guangzhou.myqcloud.com/images/article/1670489535437-333.png\" alt=\"\" data-href=\"\" style=\"\"></p>', 3, 'admin', 0);
 INSERT INTO `blogarticle` VALUES (26, 'centos彻底卸载mysql（不保留数据）', 1, 'centos彻底卸载mysql（不保留数据）', 'centos8,mysql', '2022-12-05 16:05:54', 'https://blog-1315594183.cos.ap-guangzhou.myqcloud.com/images/article/1670489561455.jpeg', '<p style=\"text-align: left; line-height: 1.5;\">1、 rpm -qa | grep -i mysql</p><p style=\"text-align: left; line-height: 1.5;\">查找已经安装的mysql.</p><p style=\"text-align: left; line-height: 1.5;\">MySQL-server-5.6.43-1.el6.x86_64 </p><p style=\"text-align: left; line-height: 1.5;\">MySQL-client-5.6.43-1.el6.x86_64</p><p style=\"text-align: left; line-height: 1.5;\">MySQL-devel-5.6.43-1.el6.x86_64</p><p style=\"text-align: left; line-height: 1.5;\">以上三个就是我安装的mysql.</p><p style=\"text-align: left; line-height: 1.5;\">2、 yum -y remove MySQL-*</p><p style=\"text-align: left; line-height: 1.5;\">网上的一般用rpm -e 的命令删除mysql,这样表面上删除了mysql,可是mysql的一些残余程序仍然存在,并且通过第一步的方式也查找不到残余,而yum命令比较强大,可以完全删除mysql.(ps:用rpm删除后再次安装的时候会提示已经安装了,这就是rpm没删除干净的原因)</p><p style=\"text-align: left; line-height: 1.5;\">3、 find / -name mysql</p><p style=\"text-align: left; line-height: 1.5;\">查找mysql的一些目录,把所有出现的目录统统删除.可以使用rm -rf &nbsp;路径，删除时请注意，一旦删除无法恢复。</p><p style=\"text-align: left; line-height: 1.5;\">4、rm -rf /etc/my.cnf</p><p style=\"text-align: left; line-height: 1.5;\">这个是删除配置文件</p><p style=\"text-align: left; line-height: 1.5;\">5、 rm -rf /root/.mysql_sercret</p><p style=\"text-align: left; line-height: 1.5;\">删除mysql的默认密码,如果不删除,以后安装mysql这个sercret中的默认密码不会变,使用其中的默认密码就可能会报类似Access denied for user \'root@localhost\' (using password:yes)的错误.</p><p style=\"text-align: left; line-height: 1.5;\">五步完成之后,这样mysql就全部删除干净了.</p>', 3, 'admin', 1);
+INSERT INTO `blogarticle` VALUES (27, '花了一天的时间，地板式扫盲了vue3所有API盲点', 1, '最近在一次理解vue项目的代码时，发现周一对好多API都不太熟悉。这间接导致的问题是，代码理解速度要比平常要慢很多。于是乎，赶忙把vue API的学习提上了日程。', 'vue', '2022-12-30 11:59:04', 'https://blog-1315594183.cos.ap-guangzhou.myqcloud.com/images/article/1672372761427.jpeg', '<p><br></p><h1>📍前言</h1><p>最近在一次理解<code>vue</code>项目的代码时，发现周一对好多<code>API</code>都不太熟悉。这间接导致的问题是，代码理解速度要比平常要慢很多。于是乎，赶忙把<code>vue API</code>的学习提上了日程。</p><p>在下面的文章中，将地板式地扫盲<code>vue3</code>文档中<code>API</code>模块的所有内容，融入周一的理解进行深入介绍。下面就来一起看看吧~🍬</p><h1>一、🖇框架搭建</h1><h2>1、关于文档</h2><p>首先附上官方文档的具体材料：<a href=\"https://link.juejin.cn?target=https%3A%2F%2Fcn.vuejs.org%2Fapi%2F\" target=\"_blank\">cn.vuejs.org/api/</a></p><h2>2、VUE3 API整体盘点</h2><p>在<code>vue3</code>的全新<code>API</code>中，有部分在<code>vue2</code>的基础上沿用了。还有另外一部分，是<code>vue3</code>所新增加的。我们先来看<code>vue3 API</code>文档主要包含哪些内容？</p><p><code>vue3 API</code>主要包含以下六个部分：</p><ul><li>全局API —— 全局会用到的API</li><li>组合式API —— vue3所拥有的组合式API</li><li>选项式API —— vue2所拥有的选项式API</li><li>内置内容 —— 指令、组件、特殊元素和特殊属性</li><li>单文件组件 —— 语法定义、<br></li><li>进阶API —— 渲染函数、服务端渲染、TS工具类型和自定义渲染</li></ul><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1a558d668bdb4098b5906856113fa41a~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"vue3 API盘点\" data-href=\"\" style=\"\"/></p><p>下面将依据上面提到的六大点内容，来进行相应的剖析和讲解。</p><h1>二、🎨全局API</h1><p>vue3的全局API包含两个部分：应用实例和通用API。那它们各自都有哪些内容呢？</p><h2>1、应用实例</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/48d3faec9e3e4347bab736c6a56ad4c1~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"02_应用实例\" data-href=\"\" style=\"\"/></p><h2>2、通用API</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/22e0ba81bdb0419ab7db3683e96c677e~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"02_通用\" data-href=\"\" style=\"\"/></p><h1>三、🚲组合式API</h1><p>谈到<code>vue3</code> ，相信大家最为熟悉的就是 <code>composition API</code> 了，也就是 <code>组合式 API</code> 。那么，<code>vue3</code> 的 <code>组合式 API</code> 都给我们带来了什么呢？</p><h2>1、setup</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c40e772cbf184b75bf6e6a869f317c03~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"01_setup\" data-href=\"\" style=\"\"/></p><h2>2、响应式：核心</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/14078b9e9ca14b5caf2ed92692bc40a2~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"02_响应式核心\" data-href=\"\" style=\"\"/></p><h2>3、响应式：工具函数</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b1b1da9b608e449ca8f21038fd761e59~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"03_响应式工具函数\" data-href=\"\" style=\"\"/></p><h2>4、响应式：进阶</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e5f1183e88624bc69a930897b47ee2ae~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"04_响应式进阶\" data-href=\"\" style=\"\"/></p><h2>5、生命周期钩子</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d78d13c852c4a6eab6a44a6601015c9~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"05_生命周期钩子\" data-href=\"\" style=\"\"/></p><h2>6、依赖注入</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b40f6eedb6f4046af0645c5564c09e0~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"06_依赖注入\" data-href=\"\" style=\"\"/></p><h1>四、🌠选项式API</h1><p><code>选项式API</code> 即 <code>options API</code> 。可能有的小伙伴会觉得它在 <code>vue2</code> 项目下会更为常见一些。但在 <code>vue3</code> 项目中，也是有一些 <code>选项式API</code> 值得我们去挖掘的。那都有哪些内容呢，我们来一探究竟。</p><h2>1、状态选项</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f7209eb996134846a80afdccdc1cf88a~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"01_状态选项\" data-href=\"\" style=\"\"/></p><h2>2、渲染选项</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c1af1316b37249dbba7add34476ba36b~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"02_渲染选项\" data-href=\"\" style=\"\"/></p><h2>3、生命周期选项</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a4cdbd423f5441a88535af4c9c48d45a~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"03_生命周期选项\" data-href=\"\" style=\"\"/></p><h2>4、组合选项</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6b0ff576506d49dbb9a37ef0e99aba2e~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"04_组合选项\" data-href=\"\" style=\"\"/></p><h2>5、其他杂项</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5b2246ebc65344cb93f1f1d4ef024a10~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"05_其他杂项\" data-href=\"\" style=\"\"/></p><h2>6、组件实例</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/037d0d3a71ea4129a64dd6c8aea93abd~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"06_组件实例\" data-href=\"\" style=\"\"/></p><h1>五、🏕内置内容</h1><p><code>vue3</code> 的内置内容包括<strong>指令</strong>、<strong>组件</strong>、<strong>特殊元素element</strong>和<strong>特殊属性attributes</strong>。如果要谈在什么场景下会用到内置内容，那周一可能觉得，在一般的 <code>vue</code> 项目开发中，基本都会用到<strong>内置内容</strong>。较为常见的是用v-if和v-else-if来判断什么时候显示某个组件，什么时候不显示某个组件。</p><p>还有像 <code>v-model</code> 、<code>v-on</code> 和 <code>v-for</code> 等指令，都是在 <code>vue</code> 项目中非常高频率使用的指令。那 <code>vue3</code> 的内置内容都还有哪些东西呢？请看下方介绍。</p><h2>1、指令</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/434b8e6051904290a8d878becfa183cf~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"01_指令\" data-href=\"\" style=\"\"/></p><h2>2、组件</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d3d10419800648108118383899dd6a58~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"02_组件\" data-href=\"\" style=\"\"/></p><h2>3、特殊元素</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e30e4b2adbbd43508cb50d2c5b194394~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"03_特殊元素\" data-href=\"\" style=\"\"/></p><h2>4、特殊属性Attributes</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d3064e1d58d8421cb4d15026bdcea024~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"04_特殊属性Attributes\" data-href=\"\" style=\"\"/></p><h1>六、📸单文件组件</h1><p>对于 <code>vue</code> 来说，相信大家都会非常熟悉它的组件化思想，似乎有一种理念是：万物皆可组件。那对于一个组件来说，我们都需要了解它的什么内容呢？比如，我们写的 <code>&lt;template&gt;</code> 是什么，用 <code>&lt;script setup&gt;</code> 和 <code>&lt;script lang=\"ts\"&gt;</code> 都分别是什么含义，<code>&lt;style&gt;</code> 用了 <code>scoped</code> 是什么意思，<code>:slotted</code> 插槽选择器又在什么情况下使用呢？我们一起来一探究竟。</p><h2>1、SFC语法定义</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8ba637efb1d0432b9bfaf9156f2a5d67~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"01_SFC语法定义\" data-href=\"\" style=\"\"/></p><h2>2、单文件组件script setup</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/24cd675bd15f462bbf1bdea7a2fa38df~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"02_单文件组setup\" data-href=\"\" style=\"\"/></p><h2>3、css功能</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb956ae4b93a433ca01be19cbc47480b~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"03_CSS功能\" data-href=\"\" style=\"\"/></p><h1>七、📈进阶API</h1><p>上面我们了解了 <code>vue3</code> 的基础API，准确来说，上面的 <code>API</code> 可以解决实际工作中 <code>80%</code> 的问题。那下面，我们就再来看一些较为进阶的 <code>api</code> 操作。下面所涉及到的这些 <code>API</code> ，更多的是可以在<strong>某些定制化的场景</strong>下，做一些高阶的操作。比如：我们可以在一个 <code>headless</code> 组件里，用 <code>render</code> 和 <code>h()</code> 函数，来渲染自定义的页面。那 <code>进阶 API</code> 都还有哪些东西呢，来看下面的内容。</p><h2>1、渲染函数</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ede9874e71314de5abaa8694e928b237~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"01_渲染函数\" data-href=\"\" style=\"\"/></p><h2>2、服务端渲染</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0ca5312a130b41239b47e73c4da823bb~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"02_服务端渲染\" data-href=\"\" style=\"\"/></p><h2>3、TypeScript工具类型</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/814883d4d24e44c99d1d12cac9932f81~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"03_TypeScript工具类型\" data-href=\"\" style=\"\"/></p><h2>4、自定义渲染</h2><p><img src=\"https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/68153183f580470aafbb0697f640ac6c~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp\" alt=\"04_自定义渲染\" data-href=\"\" style=\"\"/></p><h1>八、🛒结束语</h1><p>到这里，我们也就讲完了 <code>vue3 API</code> 所有的知识点。个人认为，原理知识的学习，是为了更好的将其运用到项目中。所以在学完以上内容后，不妨可以进一步将其运用到项目里，总结出工作中的最佳实践。</p><p>文章根据周一的理解做了一些输出，有观点不当之处欢迎交流~</p><h1>🐣彩蛋 One More Thing</h1><p>思维导图<code>github</code>地址：<a href=\"https://link.juejin.cn?target=https%3A%2F%2Fgithub.com%2FJacqueline712%2Fvue3-api\" target=\"_blank\">github.com/Jacqueline7…</a></p><p><code>vue3</code> 入门指南文章推荐：<a href=\"https://juejin.cn/post/7077701166397653028\" target=\"_blank\">焕然一新的 Vue 3 中文文档要来了🎉</a></p><p>以上就是本文的全部内容，我们下期见！<br></p><p>作者：星期一研究室<br>链接：https://juejin.cn/post/7164159759619194893<br>来源：稀土掘金<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p><p><br></p><p><br></p><p><br></p>', 3, 'admin', 2);
+INSERT INTO `blogarticle` VALUES (28, '当你遇到Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect string value:', 1, ' 当你遇到Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect string value:', 'mysql', '2022-12-30 12:00:29', 'https://blog-1315594183.cos.ap-guangzhou.myqcloud.com/images/article/1672372877101.jpeg', '<p><strong>简介：</strong> 当你遇到Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect string value:</p><p><br></p><pre><code >Error: ER_TRUNCATED_WRONG_VALUE_FOR_FIELD: Incorrect string value: \'\\xE6\\x88\\x91\\xE4\\xBB\\xAC...\' for column \'content\' at row 1</code></pre><p><br></p><p>这种原因是字符集编码导致的。</p><p><br></p><p><strong>1、验证字符集</strong>首先进入mysql：</p><p><br></p><pre><code >mysql  -u root -p</code></pre><p><br></p><p>进入之后输入以下：</p><p><br></p><pre><code >show variables like \'%character%\';</code></pre><p><br></p><p>这里是输入命令之后的视图：</p><p><br></p><pre><code >mysql&gt; show variables like \'%character%\';\n+--------------------------+----------------------------+\n| Variable_name            | Value                      |\n+--------------------------+----------------------------+\n| character_set_client     | utf8mb4                    |\n| character_set_connection | utf8mb4                    |\n| character_set_database   | latin1                     |\n| character_set_filesystem | binary                     |\n| character_set_results    | utf8mb4                    |\n| character_set_server     | latin1                     |\n| character_set_system     | utf8                       |\n| character_sets_dir       | /usr/share/mysql/charsets/ |\n+--------------------------+----------------------------+\n8 rows in set (0.01 sec)</code></pre><p><br></p><p>你会看到| character_set_server &nbsp; &nbsp; | latin1 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | 就是这个character_set_server等于latin1导致的错误，需要手动改文件</p><p><br></p><p><strong>2、进入my.cnf</strong></p><p><br></p><pre><code >vim /etc/my.cnf</code></pre><p><br></p><p>编辑my.cnf 在[mysqld]下面</p><p><br></p><pre><code >character-set-client-handshake = FALSE \ncharacter-set-server = utf8mb4 \ncollation-server = utf8mb4_unicode_ci \ninit_connect=\'SET NAMES utf8mb4\'</code></pre><p><br></p><p><strong>3、重启mysql.</strong></p><p><br></p><pre><code >service mysql restart</code></pre><p><br></p><p><strong>4、再次登录mysql，查看字符集</strong></p><p><br></p><pre><code >mysql&gt; show variables like \'%character%\';\n+--------------------------+----------------------------+\n| Variable_name            | Value                      |\n+--------------------------+----------------------------+\n| character_set_client     | utf8mb4                    |\n| character_set_connection | utf8mb4                    |\n| character_set_database   | utf8mb4                    |\n| character_set_filesystem | binary                     |\n| character_set_results    | utf8mb4                    |\n| character_set_server     | utf8mb4                    |\n| character_set_system     | utf8                       |\n| character_sets_dir       | /usr/share/mysql/charsets/ |\n+--------------------------+----------------------------+\n8 rows in set (0.01 sec)</code></pre><p>出现以上视图你就成功一半了</p><p><strong>5、</strong> 为什么成功一半呢？ 需要把已经建立好的数据库和表格全部重新建吧**</p><p>6、可以直接修改sql文件中编码格式，把里面的utf8改为utf8mp4</p><p><br></p>', 3, 'admin', 0);
 
 -- ----------------------------
 -- Table structure for blogclassify
 -- ----------------------------
 DROP TABLE IF EXISTS `blogclassify`;
 CREATE TABLE `blogclassify`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `word` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `classifyDesc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `word` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `classifyDesc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of blogclassify
@@ -76,13 +78,13 @@ INSERT INTO `blogclassify` VALUES (4, '测试', '', '', 'admin');
 -- ----------------------------
 DROP TABLE IF EXISTS `carousel`;
 CREATE TABLE `carousel`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `picture` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-  `pictureDesc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `picture` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `pictureDesc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of carousel
@@ -96,17 +98,17 @@ INSERT INTO `carousel` VALUES (5, 'https://blog-1315594183.cos.ap-guangzhou.myqc
 -- ----------------------------
 DROP TABLE IF EXISTS `leavingmessage`;
 CREATE TABLE `leavingmessage`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `pid` int(11) NULL DEFAULT NULL,
-  `time` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `replyId` int(11) NULL DEFAULT NULL,
-  `replyContent` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `articleId` int(11) NULL DEFAULT NULL,
-  `leavingMessageUserId` int(11) NULL DEFAULT NULL,
-  `replyMessageId` int(11) NULL DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `pid` int NULL DEFAULT NULL,
+  `time` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `replyId` int NULL DEFAULT NULL,
+  `replyContent` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `articleId` int NULL DEFAULT NULL,
+  `leavingMessageUserId` int NULL DEFAULT NULL,
+  `replyMessageId` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 59 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of leavingmessage
@@ -119,13 +121,13 @@ INSERT INTO `leavingmessage` VALUES (58, 0, '2022/12/27 16:24:43', ' 测试', 0,
 -- ----------------------------
 DROP TABLE IF EXISTS `leavingmessageuser`;
 CREATE TABLE `leavingmessageuser`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `lastmessagetime` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `identity` int(11) NULL DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `lastmessagetime` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `identity` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of leavingmessageuser
@@ -138,13 +140,13 @@ INSERT INTO `leavingmessageuser` VALUES (9, 'test11', '2054973476@qq.com', '2022
 -- ----------------------------
 DROP TABLE IF EXISTS `links`;
 CREATE TABLE `links`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `link` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `linkDesc` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `link` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `linkDesc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of links
@@ -157,17 +159,17 @@ INSERT INTO `links` VALUES (2, 'vue', 'https://cn.vuejs.org/', '', 'admin');
 -- ----------------------------
 DROP TABLE IF EXISTS `userinfo`;
 CREATE TABLE `userinfo`  (
-  `id` int(11) NOT NULL,
-  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `avatar` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `QQ` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `introduction` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `userDesc` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `id` int NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `avatar` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `QQ` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `introduction` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `userDesc` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of userinfo
@@ -179,12 +181,12 @@ INSERT INTO `userinfo` VALUES (1, 'admin', 'admin', 'https://blog-1315594183.cos
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users`  (
-  `id` int(11) NOT NULL,
-  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  `power` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `id` int NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `power` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
