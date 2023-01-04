@@ -14,6 +14,7 @@ const blogLinks = require("./routes/blogLinks");
 const carousel = require("./routes/carousel");
 const util = require("./routes/util");
 const leavingmessage = require("./routes/leavingmessage");
+const dashboard = require("./routes/dashboard") 
 var app = express();
 app.use(cors());
 // view engine setup
@@ -41,6 +42,7 @@ app.use("/blogLinks", blogLinks);
 app.use("/carousel", carousel);
 app.use("/util", util);
 app.use("/leavingmessage", leavingmessage);
+app.use("/dashboard", dashboard);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

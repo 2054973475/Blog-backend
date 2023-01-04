@@ -2,7 +2,7 @@ const config = {
   secretId: "",
   secretKey: "",
   proxy: "",
-  host: "sts.tencentcloudapi.com",
+  host: "",
   durationSeconds: 1800,
   bucket: "",
   region: "",
