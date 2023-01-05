@@ -12,7 +12,7 @@ router.get("/getInfo", function (req, res, next) {
 });
 router.get("/getClassify", function (req, res, next) {
   const sql =
-    'select bc.id,bc.name,count(ba.classifyId) as count from blogClassify bc left join blogArticle ba on bc.id=ba.classifyId where bc.username="admin" GROUP BY bc.name,bc.id,ba.classifyId;';
+    'select bc.id,bc.name,count(ba.classifyId) as count from blogClassify bc left join (select * from blogarticle where isRelease = 1) ba on bc.id = ba.classifyId where bc.username="admin"  GROUP BY bc.name,bc.id,ba.classifyId;';
   connection.query(sql, [], (error, results, fields) => {
     if (error) throw error;
     res.send(results);
