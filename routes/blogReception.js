@@ -95,9 +95,9 @@ router.get("/getArticle", async function (req, res, next) {
     from blogArticle ba left join blogClassify bc on ba.classifyId = bc.id 
     where ba.username = "admin" and ba.id IN
     (select case 
-    when SIGN(id-${id})>0 then min(id) 
-    when sign(id-${id})<0 then max(id) 
-    else id end from blogarticle 
+    when SIGN(ANY_VALUE(id)-${id})>0 then min(ANY_VALUE(id)) 
+    when SIGN(ANY_VALUE(id)-${id})<0 then max(ANY_VALUE(id)) 
+    else ANY_VALUE(id) end from blogarticle 
     GROUP BY SIGN(id-${id}) 
     ORDER BY SIGN(id-${id})) 
     ORDER BY id) ba left join leavingmessage lm on ba.id = lm.articleId GROUP BY ba.id;
